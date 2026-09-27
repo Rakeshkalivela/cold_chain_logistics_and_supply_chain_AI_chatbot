@@ -62,7 +62,7 @@ params = urllib.parse.quote_plus(connection_string)
 engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
 
 #----------------------------------------------------------------------------
-# Ingest Data into the messy table name
+# Ingest Data into the table 
 #----------------------------------------------------------------------------
 table_name = 'TBL_SC_FLEET_HIST_RAW'
 print(f"Ingesting into {table_name}...")

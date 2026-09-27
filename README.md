@@ -32,3 +32,36 @@ docker run -v mssql_data:/var/opt/mssql \
     - add host, in this case local host
     - trust certificate
     - Authentication details set during the server creation
+
+
+# SOP Ingestion ingest_sop_pinecone.py
+- Data is in data/policies
+- Chunking logic for different file types
+  - md: Headers mean sections. So split headers -> Text splitter -> Chunks
+  - txt: Text splitter -> Chunks
+  - csv: df -> each row -> Dictionary -> text splitter -> Chunks
+  - xlsx: df -> each row -> Dictionary -> text splitter -> Chunks
+  - pdf : Page -> Text splitter ->chunks
+- Chunks -> embeddings -> Pinecone index (Vector store)
+
+# Update and deletion logic
+- In Pinecone an 'index' is a isolated vector databse
+- files -> text -> hash -> local cache ->json
+- if ingest_sop_pinecone.py file is run for second time
+  - files will be converted to text and compare the hash
+    - If hash is same: index is not updated
+    - If hash changed: Delete all vectors related to the deleted file and Ingest new vectors of new file
+  
+
+# Text Split
+- Recursive splitting share part of text in splitting (overlap)
+
+# Embedding
+- OpenAI embedding: paid one : index - openai
+- Local embedding: free : index - local (seperate indexes)
+- Make sure to pass the user query (Question) to the same embedding used to embed documents
+
+# Data Security
+- We are restricting SQL data base for writing options
+- Created VIEWS table and a new user credentials
+- For new user INSERT, UPDATE, DELETE, ALTER commands are restricted
